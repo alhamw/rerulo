@@ -1,0 +1,24 @@
+<resources>
+    <dimen name="xxlarge_margin">48dp</dimen>
+    <dimen name="xlarge_margin">32dp</dimen>
+    <dimen name="large_margin">24dp</dimen>
+    <dimen name="normal_margin">16dp</dimen>
+    <dimen name="short_margin">8dp</dimen>
+    <dimen name="xshort_margin">4dp</dimen>
+
+    <dimen name="xxlarge_padding">48dp</dimen>
+    <dimen name="xlarge_padding">32dp</dimen>
+    <dimen name="large_padding">24dp</dimen>
+    <dimen name="normal_padding">16dp</dimen>
+    <dimen name="short_padding">8dp</dimen>
+    <dimen name="xshort_padding">4dp</dimen>
+    <dimen name="xxshort_padding">2dp</dimen>
+
+    <dimen name="btn_radius">32dp</dimen>
+    <dimen name="main_bottombar_height">56dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="standard_elevation_height">2dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dattabot.rerulo.ui.main.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/activity_main_fl_main"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.roughike.bottombar.BottomBar
+            android:id="@+id/activity_main_bb_main"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_bottombar_height"
+            app:bb_tabXmlResource="@xml/bottombar_tabs" />
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.dattabot.rerulo.ui.checkout.CheckoutActivity"
+    tools:showIn="@layout/activity_checkout">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/normal_padding"
+                android:background="@color/colorPrimary">
+
+                <ImageView
+                    android:id="@+id/checkout_btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/normal_margin"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:src="@drawable/ic_arrow_back" />
+
+                <TextView
+                    android:id="@+id/checkout_tv_store_name"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="Konfirmasi pesanan"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_or_icons"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/normal_margin"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:layout_marginBottom="@dimen/xshort_margin"
+                android:text="Produk"
+                android:textStyle="bold"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/checkout_rv_main"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginLeft="@dimen/normal_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/checkout_rv_order"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginLeft="@dimen/normal_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:id="@+id/checkout_ll_add_more_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:layout_marginRight="@dimen/normal_margin"
+                    android:layout_marginLeft="@dimen/normal_margin"
+                    android:text="Pesanan Tambahan"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/checkout_tv_add_more"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/normal_padding"
+                    android:layout_marginLeft="@dimen/normal_margin"
+                    android:layout_marginRight="@dimen/normal_margin"
+                    android:layout_marginBottom="@dimen/normal_margin"
+                    android:layout_marginTop="@dimen/xshort_margin"
+                    android:text="Tambah Barang"
+                    android:textColor="@color/text_or_icons"
+                    android:gravity="center"
+                    android:background="@drawable/rounded_blue_solid_blue" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/normal_margin"
+                android:layout_marginRight="@dimen/normal_margin">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/checkout_tv_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp 0"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="right|center_vertical"/>
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/normal_margin"
+                android:layout_marginLeft="@dimen/normal_margin"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:text="Alamat"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/checkout_tv_address_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginLeft="@dimen/normal_margin"
+                android:text="toko name"
+                android:drawableStart="@drawable/ic_location_on_green"
+                android:drawableLeft="@drawable/ic_location_on_green"
+                android:drawablePadding="@dimen/normal_padding"/>
+
+            <TextView
+                android:id="@+id/checkout_tv_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginBottom="@dimen/normal_margin"
+                android:layout_marginLeft="56dp"
+                android:text="alamat toko"/>
+
+            <TextView
+                android:id="@+id/checkout_tv_user_store"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginLeft="@dimen/normal_margin"
+                android:text="toko saya"
+                android:drawableLeft="@drawable/ic_location_on_red"
+                android:drawableStart="@drawable/ic_location_on_red"
+                android:drawablePadding="@dimen/normal_padding"/>
+
+            <TextView
+                android:id="@+id/checkout_tv_user_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:layout_marginLeft="56dp"
+                android:text="alamat toko"/>
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/checkout_btn_finish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/normal_padding"
+        android:layout_margin="@dimen/normal_margin"
+        android:text="Bayar COD"
+        android:textColor="@color/text_or_icons"
+        android:gravity="center"
+        android:background="@drawable/rounded_blue_solid_blue"/>
+
+    <TextView
+        android:id="@+id/checkout_tv_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/normal_padding"
+        android:background="@color/yellow"
+        android:text="Pesanan sedang diproses oleh penjual, akan segera dilakukan pengiriman"/>
+</LinearLayout>

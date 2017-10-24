@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/tab_home"
+        icon="@drawable/ic_local_mall"
+        title="Rerulo" />
+    <tab
+        id="@+id/tab_history"
+        icon="@drawable/ic_history_black"
+        title="Riwayat" />
+    <tab
+        id="@+id/tab_help"
+        icon="@drawable/ic_help_black"
+        title="Bantuan" />
+    <tab
+        id="@+id/tab_profile"
+        icon="@drawable/ic_person_black"
+        title="Profile" />
+</tabs>

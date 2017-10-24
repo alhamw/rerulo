@@ -1,0 +1,259 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dattabot.rerulo.ui.profile.ProfileFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/normal_padding"
+            android:background="@color/colorPrimary">
+            <TextView
+                android:id="@+id/fragment_profile_tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:text="Profil"
+                android:textStyle="bold"
+                android:textColor="@color/text_or_icons"/>
+            <TextView
+                android:id="@+id/profile_tv_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:text="@string/ubah"
+                android:textAllCaps="true"
+                android:textColor="@color/text_or_icons" />
+            <TextView
+                android:id="@+id/profile_tv_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:text="Simpan"
+                android:textAllCaps="true"
+                android:textColor="@color/text_or_icons" />
+        </FrameLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/profile_iv_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:layout_marginTop="@dimen/normal_margin"/>
+
+                <TextView
+                    android:id="@+id/profile_tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="@dimen/normal_padding"
+                    android:text="name"
+                    android:textColor="@color/colorPrimary"/>
+
+                <EditText
+                    android:id="@+id/profile_et_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="12sp"
+                    android:padding="@dimen/normal_padding"
+                    android:text="name"
+                    android:maxLines="1"
+                    android:textColor="@color/colorPrimary"/>
+
+                <include layout="@layout/layout_divider" />
+
+                <TextView
+                    android:id="@+id/profile_btn_change_pass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/normal_padding"
+                    android:gravity="center_vertical"
+                    android:text="@string/ganti_password"
+                    android:textColor="@color/colorPrimary"
+                    android:drawableTint="@color/primaryDrawableColor"
+                    android:drawableLeft="@drawable/ic_lock_outline_black"
+                    android:drawableStart="@drawable/ic_lock_outline_black"
+                    android:drawablePadding="@dimen/normal_padding"/>
+
+                <include layout="@layout/layout_divider"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/normal_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nomor Telepon"
+                        android:textStyle="bold"
+                        android:textColor="@color/primaryText"/>
+
+                    <TextView
+                        android:id="@+id/profile_tv_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:text="0896970393"
+                        android:textColor="@color/secondaryText"/>
+
+                    <EditText
+                        android:id="@+id/profile_et_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:maxLines="1"
+                        android:text="0896970393"
+                        android:textSize="12sp"
+                        android:textColor="@color/secondaryText"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Toko Saya"
+                        android:textStyle="bold"
+                        android:textColor="@color/primaryText"/>
+
+                    <TextView
+                        android:id="@+id/profile_tv_store_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lancar Jaya"
+                        android:textColor="@color/secondaryText"/>
+
+                    <EditText
+                        android:id="@+id/profile_et_store_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lancar Jaya"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        android:textColor="@color/secondaryText"/>
+
+                    <TextView
+                        android:id="@+id/profile_tv_store_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:text="kebon jeruk"
+                        android:textColor="@color/secondaryText"/>
+
+                    <EditText
+                        android:id="@+id/profile_et_store_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:text="kebon jeruk"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        android:textColor="@color/secondaryText"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Propinsi dan Kota"
+                        android:textStyle="bold"
+                        android:textColor="@color/primaryText"/>
+
+                    <TextView
+                        android:id="@+id/profile_tv_city"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DKI Jakarta"
+                        android:textColor="@color/secondaryText"/>
+
+                    <EditText
+                        android:id="@+id/profile_et_city"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DKI Jakarta"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        android:textColor="@color/secondaryText"/>
+
+                    <TextView
+                        android:id="@+id/profile_tv_province"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:text="Jakarta barat"
+                        android:textColor="@color/secondaryText"/>
+
+                    <EditText
+                        android:id="@+id/profile_et_province"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:text="Jakarta barat"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        android:textColor="@color/secondaryText"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kode Pos"
+                        android:textStyle="bold"
+                        android:textColor="@color/primaryText"/>
+
+                    <TextView
+                        android:id="@+id/profile_tv_poscode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:text="11230"
+                        android:textColor="@color/secondaryText"/>
+
+                    <EditText
+                        android:id="@+id/profile_et_poscode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:text="11230"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        android:textColor="@color/secondaryText"/>
+
+                </LinearLayout>
+
+                <include layout="@layout/layout_divider"/>
+
+                <TextView
+                    android:id="@+id/profile_btn_logout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/normal_padding"
+                    android:gravity="center_vertical"
+                    android:text="@string/logout"
+                    android:textColor="@color/colorPrimary"
+                    android:drawableTint="@color/primaryDrawableColor"
+                    android:drawableLeft="@drawable/ic_person_black"
+                    android:drawableStart="@drawable/ic_person_black"
+                    android:drawablePadding="@dimen/normal_padding"/>
+
+                <include layout="@layout/layout_divider"/>
+            </LinearLayout>
+
+
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</FrameLayout>

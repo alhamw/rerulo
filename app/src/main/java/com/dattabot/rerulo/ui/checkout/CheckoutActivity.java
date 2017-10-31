@@ -37,7 +37,7 @@ import io.realm.RealmResults;
 public class CheckoutActivity extends AppCompatActivity {
     private final String TAG = getClass().getSimpleName();
 
-    private int idStore;
+    private String idStore;
     private Realm realm;
     private RealmHelper realmHelper;
     private Cart cart;
@@ -83,7 +83,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         isFinishOrder = getIntent().getBooleanExtra(Config.ARG_FINISH_ORDER, false);
         isFromHistory = getIntent().getBooleanExtra(Config.ARG_HISTORY, false);
-        idStore = getIntent().getIntExtra(Config.ARG_ID, 0);
+        idStore = getIntent().getStringExtra(Config.ARG_ID);
 
         Log.d(TAG, "idStore " + idStore);
         Log.d(TAG, "isFinishOrder " + isFinishOrder);

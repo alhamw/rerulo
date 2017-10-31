@@ -17,18 +17,25 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dattabot.rerulo.R;
+import com.dattabot.rerulo.config.ApiUtils;
 import com.dattabot.rerulo.config.Config;
+import com.dattabot.rerulo.config.DattaBot;
+import com.dattabot.rerulo.config.RealmHelper;
+import com.dattabot.rerulo.model.RestModel.StoreModel;
 import com.dattabot.rerulo.model.Store;
-import com.dattabot.rerulo.model.StoreModel;
 import com.dattabot.rerulo.ui.store.StoreGalleryActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -44,6 +51,8 @@ public class HomeFragment extends Fragment {
     private AdapterStore adapterStore;
     private RealmResults<Store> storeModels;
     private Realm realm;
+    private RealmHelper realmHelper;
+    private DattaBot dattaBot;
 
     @BindView(R.id.layout_appbar_tv_title)
     TextView tvAppBarTitle;
@@ -51,6 +60,8 @@ public class HomeFragment extends Fragment {
     RecyclerView rvStore;
     @BindView(R.id.home_et_search)
     EditText etSearch;
+    @BindView(R.id.fragment_home_tv_not_found)
+    TextView tvNotFound;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -81,6 +92,8 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
         realm = Realm.getDefaultInstance();
+        realmHelper = new RealmHelper(realm);
+        dattaBot = ApiUtils.getDattaBotervice();
 
         init();
 
@@ -94,7 +107,6 @@ public class HomeFragment extends Fragment {
         rvStore.setLayoutManager(glm);
         rvStore.setHasFixedSize(true);
 
-        storeModels = realm.where(Store.class).findAll();
         adapterStore = new AdapterStore(getActivity(), storeModels);
         adapterStore.setOnStoreClickListener(new AdapterStore.OnStoreClickListener() {
             @Override
@@ -122,6 +134,53 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
+        setUpListStore();
+    }
+
+    private void setUpListStore() {
+//        storeModels = realmHelper.getStoreList();
+//
+//        if (storeModels.size() == 0) {
+            dattaBot.getStore("", "", "")
+                    .enqueue(new Callback<List<StoreModel>>() {
+                        @Override
+                        public void onResponse(Call<List<StoreModel>> call, Response<List<StoreModel>> response) {
+                            Log.d(TAG, response.toString());
+                            if (response.isSuccessful()) {
+                                for (StoreModel sm : response.body()) {
+                                    Store store = new Store();
+                                    store.setIdStore(sm.getWCode());
+                                    store.setName(sm.getWName());
+                                    store.setImgUrl(sm.getWImg());
+                                    store.setAddress(sm.getWAddress());
+                                    store.setProvince(sm.getWProvince());
+
+                                    realmHelper.insertStore(store);
+                                }
+                                storeModels = realmHelper.getStoreList();
+                                adapterStore.notifyDataSetChanged();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<StoreModel>> call, Throwable t) {
+                            Log.d(TAG, t.toString());
+                        }
+                    });
+//        }
+
+//        adapterStore.notifyDataSetChanged();
+    }
+
+    private void showContent() {
+        rvStore.setVisibility(View.VISIBLE);
+        tvNotFound.setVisibility(View.GONE);
+    }
+
+    private void showDataNotFound() {
+        rvStore.setVisibility(View.GONE);
+        tvNotFound.setVisibility(View.VISIBLE);
     }
 
     @Override

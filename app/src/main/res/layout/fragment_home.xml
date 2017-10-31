@@ -58,6 +58,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
+            <TextView
+                android:id="@+id/fragment_home_tv_not_found"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Data tidak ditemukan"/>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"

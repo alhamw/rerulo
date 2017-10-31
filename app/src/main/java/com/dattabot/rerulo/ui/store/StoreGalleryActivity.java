@@ -68,7 +68,7 @@ public class StoreGalleryActivity extends AppCompatActivity implements ProductFr
         realm = Realm.getDefaultInstance();
         realmHelper = new RealmHelper(realm);
 
-        Integer id = getIntent().getIntExtra(Config.ARG_ID, 0);
+        String id = getIntent().getStringExtra(Config.ARG_ID);
         store = realmHelper.getStoreById(id);
 
         categoryStore = store.getCategories();

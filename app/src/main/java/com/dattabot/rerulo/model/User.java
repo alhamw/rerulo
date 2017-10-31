@@ -8,8 +8,19 @@ import io.realm.RealmObject;
 
 public class User extends RealmObject {
     private String name, pass, noTelp, storeName, address, city, province, posCode, imgUrl;
+    private Boolean isLogin = false;
 
     public User() {
+    }
+
+    public User(String name, String pass, String noTelp, String storeName, String address, String city, String province) {
+        this.name = name;
+        this.pass = pass;
+        this.noTelp = noTelp;
+        this.storeName = storeName;
+        this.address = address;
+        this.city = city;
+        this.province = province;
     }
 
     public User(String name, String pass, String noTelp, String storeName, String address, String city, String province, String posCode, String imgUrl) {
@@ -33,6 +44,14 @@ public class User extends RealmObject {
         this.city = city;
         this.province = province;
         this.posCode = posCode;
+    }
+
+    public Boolean isLogin() {
+        return isLogin;
+    }
+
+    public void setLogin(Boolean login) {
+        isLogin = login;
     }
 
     public String getAddress() {

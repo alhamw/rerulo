@@ -21,6 +21,7 @@ import com.dattabot.rerulo.model.Store;
 import com.dattabot.rerulo.model.StoreCategoryModel;
 import com.dattabot.rerulo.model.StoreModel;
 import com.dattabot.rerulo.model.TestModel;
+import com.dattabot.rerulo.model.User;
 import com.dattabot.rerulo.ui.checkout.CheckoutActivity;
 import com.dattabot.rerulo.ui.help.HelpFragment;
 import com.dattabot.rerulo.ui.history.ActiveOrderFragment;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnHo
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == HISTORY_CODE) {
             if (resultCode == RESULT_OK) {
-                int idStore = data.getIntExtra(Config.ARG_ID, 0);
+                String idStore = data.getStringExtra(Config.ARG_ID);
                 openStoreDetail(idStore);
             }
         }
@@ -159,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnHo
         startActivityForResult(intent, HISTORY_CODE);
     }
 
-    public void openStoreDetail(int idStore) {
+    public void openStoreDetail(String idStore) {
         Intent intent = new Intent(this, StoreGalleryActivity.class);
         intent.putExtra(Config.ARG_ID, idStore);
         startActivity(intent);
@@ -183,23 +184,32 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnHo
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Apakah yakin mau keluar dari aplikasi ?")
-                .setCancelable(false)
-                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //finish();
-                        onSuperBackPressed();
-                        //super.onBackPressed();
-                    }
-                })
-                .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+        FragmentManager fm = getSupportFragmentManager();
+        int stackCount = fm.getBackStackEntryCount();
+
+        Log.d(TAG, String.valueOf(stackCount));
+        if (stackCount > 0) {
+            super.onBackPressed();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Apakah yakin mau keluar dari aplikasi ?")
+                    .setCancelable(false)
+                    .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            finish();
+//                        onSuperBackPressed();
+                            //super.onBackPressed();
+                        }
+                    })
+                    .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     public void onSuperBackPressed(){

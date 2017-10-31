@@ -18,6 +18,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    realm {
+        syncEnabled = true
+    }
 }
 
 dependencies {
@@ -40,4 +43,9 @@ dependencies {
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.uphyca:stetho_realm:2.1.0'
     compile 'io.realm:android-adapters:2.1.0'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+
+    // JSON Parsing
+    compile 'com.google.code.gson:gson:2.6.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 }

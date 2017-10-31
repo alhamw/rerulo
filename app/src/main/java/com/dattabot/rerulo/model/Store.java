@@ -9,15 +9,14 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Store extends RealmObject{
-    @PrimaryKey
-    private int idStore;
+    private String idStore;
     private String name, address, city, province, imgUrl;
     private RealmList<Category> categories;
 
     public Store() {
     }
 
-    public Store(int idStore, String name, String address, String city, String province, String imgUrl, RealmList<Category> categories) {
+    public Store(String idStore, String name, String address, String city, String province, String imgUrl, RealmList<Category> categories) {
         this.idStore = idStore;
         this.name = name;
         this.address = address;
@@ -27,7 +26,7 @@ public class Store extends RealmObject{
         this.categories = categories;
     }
 
-    public Store(int idStore, String name, String address, String city, String province, String imgUrl) {
+    public Store(String idStore, String name, String address, String city, String province, String imgUrl) {
         this.idStore = idStore;
         this.name = name;
         this.address = address;
@@ -36,11 +35,11 @@ public class Store extends RealmObject{
         this.imgUrl = imgUrl;
     }
 
-    public int getIdStore() {
+    public String getIdStore() {
         return idStore;
     }
 
-    public void setIdStore(int idStore) {
+    public void setIdStore(String idStore) {
         this.idStore = idStore;
     }
 

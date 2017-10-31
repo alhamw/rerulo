@@ -203,6 +203,10 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.profile_btn_logout)
     public void onLogoutClicked() {
+        realm.beginTransaction();
+        user.setLogin(false);
+        realm.commitTransaction();
+
         mListener.onLogoutClicked();
     }
 

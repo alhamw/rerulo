@@ -29,7 +29,7 @@ public class ProductFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private Integer idStore;
+    private String idStore;
     private Integer idCategory;
     private Realm realm;
     private RealmHelper realmHelper;
@@ -49,10 +49,10 @@ public class ProductFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ProductFragment newInstance(Integer idStore, Integer idCategory) {
+    public static ProductFragment newInstance(String idStore, Integer idCategory) {
         ProductFragment fragment = new ProductFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, idStore);
+        args.putString(ARG_PARAM1, idStore);
         args.putInt(ARG_PARAM2, idCategory);
         fragment.setArguments(args);
         return fragment;
@@ -62,7 +62,7 @@ public class ProductFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            idStore = getArguments().getInt(ARG_PARAM1);
+            idStore = getArguments().getString(ARG_PARAM1);
             idCategory = getArguments().getInt(ARG_PARAM2);
         }
     }

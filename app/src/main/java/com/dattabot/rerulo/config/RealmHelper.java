@@ -78,7 +78,7 @@ public class RealmHelper {
         return cart;
     }
 
-    public Store getStoreById(int idStore) {
+    public Store getStoreById(String idStore) {
         Store store = realm.where(Store.class).equalTo("idStore", idStore).findFirst();
         return store;
     }
@@ -88,14 +88,14 @@ public class RealmHelper {
         return category;
     }
 
-    public Cart findCartStoreById(int idStore) {
+    public Cart findCartStoreById(String idStore) {
         return realm.where(Cart.class)
                 .equalTo("store.idStore", idStore)
                 .equalTo("status", false)
                 .findFirst();
     }
 
-    public Cart findFinishCartStoreById(int idStore) {
+    public Cart findFinishCartStoreById(String idStore) {
         return realm.where(Cart.class)
                 .equalTo("store.idStore", idStore)
                 .equalTo("status", true)
@@ -112,7 +112,7 @@ public class RealmHelper {
         }
     }
 
-    public void updateCart(int idStore, Product product, Integer quantity) {
+    public void updateCart(String idStore, Product product, Integer quantity) {
         Cart cart = findCartStoreById(idStore);
 
         Log.d(TAG, String.valueOf(cart));
@@ -233,4 +233,8 @@ public class RealmHelper {
         realm.commitTransaction();
     }
 
+    public RealmResults<Store> getStoreList() {
+        RealmResults<Store> stores = realm.where(Store.class).findAll();
+        return stores;
+    }
 }

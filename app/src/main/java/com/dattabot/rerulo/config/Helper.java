@@ -7,6 +7,7 @@ import com.dattabot.rerulo.model.CategoryModel;
 import com.dattabot.rerulo.model.ProductModel;
 import com.dattabot.rerulo.model.StoreCategoryModel;
 import com.dattabot.rerulo.model.StoreModel;
+import com.dattabot.rerulo.model.User;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

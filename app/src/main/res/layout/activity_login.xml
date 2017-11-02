@@ -44,7 +44,7 @@
                     android:drawableLeft="@drawable/ic_smartphone"
                     android:drawableStart="@drawable/ic_smartphone"
                     android:drawablePadding="@dimen/normal_padding"
-                    android:inputType="textEmailAddress"
+                    android:inputType="phone"
                     android:maxLines="1"
                     android:singleLine="true" />
 

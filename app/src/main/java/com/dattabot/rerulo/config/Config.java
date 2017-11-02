@@ -13,4 +13,6 @@ public class Config {
     public static final String ARG_ID = "id";
     public static final String ARG_FINISH_ORDER = "finishOrder";
     public static final String ARG_HISTORY = "history";
+
+    public static final int CODE_CHECKOUT = 101;
 }

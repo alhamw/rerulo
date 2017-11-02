@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,12 +15,9 @@ import android.widget.Toast;
 
 import com.dattabot.rerulo.R;
 import com.dattabot.rerulo.config.Config;
-import com.dattabot.rerulo.model.CategoryModel;
+import com.dattabot.rerulo.config.RealmHelper;
+import com.dattabot.rerulo.model.Cart;
 import com.dattabot.rerulo.model.Store;
-import com.dattabot.rerulo.model.StoreCategoryModel;
-import com.dattabot.rerulo.model.StoreModel;
-import com.dattabot.rerulo.model.TestModel;
-import com.dattabot.rerulo.model.User;
 import com.dattabot.rerulo.ui.checkout.CheckoutActivity;
 import com.dattabot.rerulo.ui.help.HelpFragment;
 import com.dattabot.rerulo.ui.history.ActiveOrderFragment;
@@ -35,13 +31,9 @@ import com.dattabot.rerulo.ui.store.StoreGalleryActivity;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
-import io.realm.RealmList;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.OnHomeStoreClickListener,
         HelpFragment.OnFragmentInteractionListener,
@@ -55,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnHo
     private static final int HISTORY_CODE = 1;
     private final String TAG = getClass().getSimpleName();
     private Realm realm;
+    private RealmHelper realmHelper;
 
     @BindView(R.id.activity_main_bb_main)
     BottomBar bbMain;
@@ -68,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnHo
         ButterKnife.bind(this);
 
         realm = Realm.getDefaultInstance();
+        realmHelper = new RealmHelper(realm);
 
         init();
     }
@@ -125,13 +119,22 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnHo
         if (requestCode == HISTORY_CODE) {
             if (resultCode == RESULT_OK) {
                 String idStore = data.getStringExtra(Config.ARG_ID);
-                openStoreDetail(idStore);
+                Log.d(TAG, "From history");
+                if (idStore != null) {
+                    openStoreDetail(idStore, true);
+                }else {
+                    FragmentManager fm = getSupportFragmentManager();
+                    Fragment fragment = fm.findFragmentById(R.id.activity_main_fl_main);
+                    ((HistoryFragment) fragment).refresh();
+                }
             }
         }
     }
 
     @Override
     public void onLogoutClicked() {
+        realmHelper.deleteRealmData();
+
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -150,9 +153,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnHo
         onBackPressed();
     }
 
-    public void openCartStore(Store store, boolean isFinish) {
+    public void openCartStore(Cart cart, boolean isFinish) {
         Intent intent = new Intent(this, CheckoutActivity.class);
-        intent.putExtra(Config.ARG_ID, store.getIdStore());
+        intent.putExtra(Config.ARG_ID, cart.getIdCart());
         intent.putExtra(Config.ARG_HISTORY, true);
         if (isFinish) {
             intent.putExtra(Config.ARG_FINISH_ORDER, true);
@@ -160,26 +163,27 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnHo
         startActivityForResult(intent, HISTORY_CODE);
     }
 
-    public void openStoreDetail(String idStore) {
+    public void openStoreDetail(String idStore, boolean fromHistory) {
         Intent intent = new Intent(this, StoreGalleryActivity.class);
         intent.putExtra(Config.ARG_ID, idStore);
+        intent.putExtra(Config.ARG_HISTORY, fromHistory);
         startActivity(intent);
     }
 
     @Override
-    public void onActiveCartClicked(Store store) {
-        openCartStore(store, false);
+    public void onActiveCartClicked(Cart cart) {
+        openCartStore(cart, false);
     }
 
     @Override
-    public void onFinishOrderClicked(Store store) {
-        Log.d(TAG, "onFinishOrderClicked" + store.getIdStore());
-        openCartStore(store, true);
+    public void onFinishOrderClicked(Cart cart) {
+        Log.d(TAG, "onFinishOrderClicked" + cart.getStore().getIdStore());
+        openCartStore(cart, true);
     }
 
     @Override
     public void onHomeStoreClicked(Store store) {
-        openStoreDetail(store.getIdStore());
+        openStoreDetail(store.getIdStore(), false);
     }
 
     @Override

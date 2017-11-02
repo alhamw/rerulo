@@ -9,26 +9,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dattabot.rerulo.R;
+import com.dattabot.rerulo.config.ApiUtils;
 import com.dattabot.rerulo.config.Config;
+import com.dattabot.rerulo.config.DattaBot;
 import com.dattabot.rerulo.config.Helper;
 import com.dattabot.rerulo.config.RealmHelper;
 import com.dattabot.rerulo.model.Cart;
-import com.dattabot.rerulo.model.CartModel;
 import com.dattabot.rerulo.model.Category;
-import com.dattabot.rerulo.model.CategoryModel;
-import com.dattabot.rerulo.model.Product;
-import com.dattabot.rerulo.model.ProductModel;
+import com.dattabot.rerulo.model.RestModel.CategoryModel;
 import com.dattabot.rerulo.model.Store;
-import com.dattabot.rerulo.model.StoreCategoryModel;
-import com.dattabot.rerulo.model.StoreModel;
 import com.dattabot.rerulo.ui.checkout.CheckoutActivity;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,14 +34,20 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.RealmResults;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class StoreGalleryActivity extends AppCompatActivity implements ProductFragment.OnBtnIncClickListener{
+public class StoreGalleryActivity extends AppCompatActivity {
+    private String TAG = getClass().getSimpleName();
     private Cart cart;
     private Store store;
     private Realm realm;
     private RealmList<Category> categoryStore;
     private RealmHelper realmHelper;
+    private boolean isFromHistory;
 
+    private DattaBot dattaBot;
     @BindView(R.id.store_gallery_tv_store_name)
     TextView tvStoreName;
     @BindView(R.id.store_gallery_btn_back)
@@ -58,7 +60,10 @@ public class StoreGalleryActivity extends AppCompatActivity implements ProductFr
     FrameLayout flBottomCart;
     @BindView(R.id.store_gallery_tv_total)
     TextView tvTotal;
-    private String TAG = getClass().getSimpleName();
+    @BindView(R.id.store_gallery_ll_container)
+    LinearLayout llContentContainer;
+    @BindView(R.id.store_gallery_tv_not_found)
+    TextView tvNotFound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,49 +72,91 @@ public class StoreGalleryActivity extends AppCompatActivity implements ProductFr
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
         realmHelper = new RealmHelper(realm);
+        dattaBot = ApiUtils.getDattaBotervice();
 
         String id = getIntent().getStringExtra(Config.ARG_ID);
         store = realmHelper.getStoreById(id);
 
-        categoryStore = store.getCategories();
-
+        isFromHistory = getIntent().getBooleanExtra(Config.ARG_HISTORY, false);
+        Log.d(TAG, "isFromHistory " + isFromHistory);
         tvStoreName.setText(store.getName());
         init();
+        setUpCart();
+    }
 
+    private void setUpCart() {
         RealmResults<Cart> carts = realm.where(Cart.class).findAll();
-        carts.addChangeListener(new RealmChangeListener<RealmResults<Cart>>() {
-            @Override
-            public void onChange(RealmResults<Cart> carts) {
-                flBottomCart.setVisibility(View.GONE);
-                for (Cart crt: carts){
+        Log.d(TAG, "cart size " + carts.size());
 
-                    if (crt.getStore().getIdStore() == store.getIdStore() && !crt.isStatus()){
-                        flBottomCart.setVisibility(View.VISIBLE);
-
-                        tvTotal.setText("Rp " + crt.getTotal());
-                        break;
-                    }
+        if (!isFromHistory) {
+            cart = realmHelper.findCartStoreById(store.getIdStore());
+            if (cart == null) {
+                if (realmHelper.findEmptyCartStoreById(store.getIdStore()) == null) {
+                    Log.d(TAG, "Empty cart not available ");
+                    realmHelper.createEmptyCartStore(store);
                 }
+                cart = realmHelper.findEmptyCartStoreById(store.getIdStore());
+            }else {
+                Log.d(TAG, "Cart already filled ");
             }
-        });
+        }else {
+            cart = realmHelper.findCartStoreById(store.getIdStore());
+        }
+
+
+        if (cart != null) {
+            Log.d(TAG, "Not null");
+            cart.addChangeListener(new RealmChangeListener<RealmModel>() {
+                @Override
+                public void onChange(RealmModel realmModel) {
+                    Log.d(TAG, "cart change");
+                    Cart crt = (Cart) realmModel;
+
+                    flBottomCart.setVisibility(View.VISIBLE);
+                    tvTotal.setText("Rp " + Helper.convertRupiahFormat(String.valueOf(crt.getTotal())));
+                }
+            });
+        }
     }
 
     private void init() {
-        AdapterStoreViewPager adapter = new AdapterStoreViewPager(getSupportFragmentManager());
-        for (Category category: categoryStore) {
-            adapter.addFragment(new ProductFragment().newInstance(store.getIdStore(), category.getIdCat()), category.getName());
-        }
-        vpMain.setAdapter(adapter);
-        tbMain.setupWithViewPager(vpMain);
+        categoryStore = realmHelper.getCategoryStore(store.getIdStore());
 
-        flBottomCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(StoreGalleryActivity.this, CheckoutActivity.class);
-                intent.putExtra(Config.ARG_ID, store.getIdStore());
-                startActivity(intent);
-            }
-        });
+        if (categoryStore.size() > 0) {
+            setTabLayout();
+        }else {
+            dattaBot.getStoreCategory(store.getIdStore()).enqueue(new Callback<List<CategoryModel>>() {
+                @Override
+                public void onResponse(Call<List<CategoryModel>> call, Response<List<CategoryModel>> response) {
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, String.valueOf(response.body().size()));
+                        if (response.body().size() > 0) {
+                            for (CategoryModel cm : response.body()) {
+                                Category category = new Category();
+                                category.setIdCat(Helper.generateId());
+                                category.setCatName(cm.getCategoryName());
+                                category.setCatId(cm.getCategoryId());
+                                category.setIdStore(cm.getWCode());
+
+                                realmHelper.insertCategory(category);
+
+                                realm.beginTransaction();
+                                categoryStore.add(category);
+                                realm.commitTransaction();
+                            }
+                            setTabLayout();
+                        } else {
+                            setDataNotFound();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<CategoryModel>> call, Throwable t) {
+                    Log.d(TAG, t.toString());
+                }
+            });
+        }
 
         if (realmHelper.isEmptyStoreCart(store)) {
             flBottomCart.setVisibility(View.GONE);
@@ -119,6 +166,51 @@ public class StoreGalleryActivity extends AppCompatActivity implements ProductFr
             Cart cart = realmHelper.findCartStoreById(store.getIdStore());
             tvTotal.setText("Rp " + cart.getTotal());
         }
+    }
+
+    private void setDataNotFound() {
+        llContentContainer.setVisibility(View.GONE);
+        tvNotFound.setVisibility(View.VISIBLE);
+    }
+
+    private void setTabLayout() {
+        llContentContainer.setVisibility(View.VISIBLE);
+        tvNotFound.setVisibility(View.GONE);
+
+        AdapterStoreViewPager adapter = new AdapterStoreViewPager(getSupportFragmentManager());
+        for (Category category: categoryStore) {
+            adapter.addFragment(new ProductFragment().newInstance(store.getIdStore(), category.getIdCat()), category.getCatName());
+        }
+        vpMain.setAdapter(adapter);
+        tbMain.setupWithViewPager(vpMain);
+
+        flBottomCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StoreGalleryActivity.this, CheckoutActivity.class);
+                intent.putExtra(Config.ARG_ID, cart.getIdCart());
+                startActivityForResult(intent, Config.CODE_CHECKOUT);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Config.CODE_CHECKOUT) {
+            if (resultCode == RESULT_OK) {
+                isFromHistory = false;
+
+                setUpCart();
+                flBottomCart.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        cart.removeAllChangeListeners();
+        super.onStop();
     }
 
     @Override
@@ -132,8 +224,4 @@ public class StoreGalleryActivity extends AppCompatActivity implements ProductFr
         onBackPressed();
     }
 
-    @Override
-    public void onBtnIncClicked(ProductModel product) {
-//        Helper.insertProductToCart(realm, store.getId(), product);
-    }
 }

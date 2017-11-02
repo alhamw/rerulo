@@ -9,11 +9,31 @@ import io.realm.annotations.PrimaryKey;
 
 public class CartItem extends RealmObject {
     @PrimaryKey
+    private int idCartItem;
     private int idProduct;
     private String name, imgUrl, unit;
     private int price, total;
 
     public CartItem() {
+    }
+
+    public int getIdCartItem() {
+        return idCartItem;
+    }
+
+    public void setIdCartItem(int idCartItem) {
+        this.idCartItem = idCartItem;
+    }
+
+    public CartItem(int idCartItem, int idProduct, String name, String imgUrl, String unit, int price, int total) {
+
+        this.idCartItem = idCartItem;
+        this.idProduct = idProduct;
+        this.name = name;
+        this.imgUrl = imgUrl;
+        this.unit = unit;
+        this.price = price;
+        this.total = total;
     }
 
     public CartItem(String name, String imgUrl, String unit, int price, int total) {

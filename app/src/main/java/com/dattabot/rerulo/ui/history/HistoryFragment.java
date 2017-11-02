@@ -101,11 +101,6 @@ public class HistoryFragment extends Fragment {
         tvAppBarTitle.setText("Riwayat");
         finishOrderFragment = new FinishOrderFragment();
         activeOrderFragment = new ActiveOrderFragment();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         AdapterHistoryViewPager adapterViewPager = new AdapterHistoryViewPager(getChildFragmentManager());
         adapterViewPager.addFragment(activeOrderFragment, "sedang berlangsung ");
@@ -116,12 +111,11 @@ public class HistoryFragment extends Fragment {
         vpMain.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
-                vpMain.getAdapter().notifyDataSetChanged();
+//                vpMain.getAdapter().notifyDataSetChanged();
             }
 
             @Override
@@ -129,6 +123,16 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+    }
+
+    public void refresh() {
+        activeOrderFragment.refresh();
+        finishOrderFragment.refresh();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override

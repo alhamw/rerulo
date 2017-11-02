@@ -2,18 +2,13 @@ package com.dattabot.rerulo.ui.checkout;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,12 +27,11 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmModel;
-import io.realm.RealmResults;
 
 public class CheckoutActivity extends AppCompatActivity {
     private final String TAG = getClass().getSimpleName();
 
-    private String idStore;
+    private int idCart;
     private Realm realm;
     private RealmHelper realmHelper;
     private Cart cart;
@@ -83,15 +77,19 @@ public class CheckoutActivity extends AppCompatActivity {
 
         isFinishOrder = getIntent().getBooleanExtra(Config.ARG_FINISH_ORDER, false);
         isFromHistory = getIntent().getBooleanExtra(Config.ARG_HISTORY, false);
-        idStore = getIntent().getStringExtra(Config.ARG_ID);
+        idCart = getIntent().getIntExtra(Config.ARG_ID, 0);
 
-        Log.d(TAG, "idStore " + idStore);
+        Log.d(TAG, "idCart " + idCart);
         Log.d(TAG, "isFinishOrder " + isFinishOrder);
-        if (isFinishOrder) {
-            cart = realmHelper.findFinishCartStoreById(idStore);
-        }else {
-            cart = realmHelper.findCartStoreById(idStore);
-        }
+
+        cart = realmHelper.findCartById(idCart);
+        isFinishOrder = cart.isStatus();
+
+//        if (isFinishOrder) {
+//            cart = realmHelper.findFinishCartStoreById(idCart);
+//        }else {
+//            cart = realmHelper.findCartStoreById(idCart);
+//        }
         cart.addChangeListener(new RealmChangeListener<RealmModel>() {
             @Override
             public void onChange(RealmModel realmModel) {
@@ -146,7 +144,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 @Override
                 public void onBtnQuantityClicked(Product product, Integer quantity) {
                     Log.d(TAG, String.valueOf(quantity));
-                    realmHelper.updateCart(idStore, product, quantity);
+                    realmHelper.updateCart(cart.getStore().getIdStore(), product, quantity);
                 }
             });
         }
@@ -162,6 +160,9 @@ public class CheckoutActivity extends AppCompatActivity {
     public void onFinishClicked() {
         realmHelper.finishCartTransaction(cart);
         Toast.makeText(this, "Pesanan telah selesai, barang akan dikirim segera mungkin", Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
         finish();
     }
 
@@ -169,7 +170,7 @@ public class CheckoutActivity extends AppCompatActivity {
     public void onAddMoreClicked() {
         if (isFromHistory) {
             Intent intent = new Intent();
-            intent.putExtra(Config.ARG_ID, idStore);
+            intent.putExtra(Config.ARG_ID, cart.getStore().getIdStore());
             setResult(RESULT_OK, intent);
             finish();
         }else {
@@ -180,5 +181,13 @@ public class CheckoutActivity extends AppCompatActivity {
     @OnClick(R.id.checkout_btn_back)
     public void onBackClicked(){
         onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        Intent intent = new Intent();
+        setResult(RESULT_CANCELED, intent);
+        finish();
     }
 }

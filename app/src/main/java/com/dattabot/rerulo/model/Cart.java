@@ -29,6 +29,13 @@ public class Cart extends RealmObject{
         this.products = products;
     }
 
+    public Cart(int idCart, Store store, int total, boolean status) {
+        this.idCart = idCart;
+        this.store = store;
+        this.total = total;
+        this.status = status;
+    }
+
     public RealmList<CartItem> getCartItems() {
         return cartItems;
     }

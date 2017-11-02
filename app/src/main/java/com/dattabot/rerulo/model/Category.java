@@ -9,28 +9,20 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Category extends RealmObject {
-    @PrimaryKey
     private int idCat;
-    private String name;
+    private String catName;
+    private String catId;
+    private String idStore;
     private RealmList<Product> products;
 
     public Category() {
     }
 
-    public Category(String name, RealmList<Product> products) {
-        this.name = name;
-        this.products = products;
-    }
-
-    public Category(int idCat, String name) {
+    public Category(int idCat, String catName, String catId, String idStore) {
         this.idCat = idCat;
-        this.name = name;
-    }
-
-    public Category(int idCat, String name, RealmList<Product> products) {
-        this.idCat = idCat;
-        this.name = name;
-        this.products = products;
+        this.catName = catName;
+        this.catId = catId;
+        this.idStore = idStore;
     }
 
     public int getIdCat() {
@@ -41,12 +33,28 @@ public class Category extends RealmObject {
         this.idCat = idCat;
     }
 
-    public String getName() {
-        return name;
+    public String getCatName() {
+        return catName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCatName(String catName) {
+        this.catName = catName;
+    }
+
+    public String getCatId() {
+        return catId;
+    }
+
+    public void setCatId(String catId) {
+        this.catId = catId;
+    }
+
+    public String getIdStore() {
+        return idStore;
+    }
+
+    public void setIdStore(String idStore) {
+        this.idStore = idStore;
     }
 
     public RealmList<Product> getProducts() {

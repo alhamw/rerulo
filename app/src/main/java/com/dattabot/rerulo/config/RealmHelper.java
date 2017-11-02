@@ -42,8 +42,12 @@ public class RealmHelper {
         realm.beginTransaction();
         realm.copyToRealm(store);
         realm.commitTransaction();
+    }
 
-        Log.d(TAG, store.getName() + "is added");
+    public void deleteRealmData() {
+        realm.beginTransaction();
+        realm.deleteAll();
+        realm.commitTransaction();
     }
 
     public void insertCategory(Category category) {
@@ -51,7 +55,15 @@ public class RealmHelper {
         realm.copyToRealm(category);
         realm.commitTransaction();
 
-        Log.d(TAG, category.getName() + "is added");
+    }
+
+    public RealmList<Category> getCategoryStore(String idStore) {
+        RealmList<Category> categories = new RealmList<>();
+        RealmResults<Category> categoryRealmResults = realm.where(Category.class).equalTo("idStore", idStore).findAll();
+
+        categories.addAll(categoryRealmResults);
+
+        return categories;
     }
 
     public void insertProduct(Product product) {
@@ -59,7 +71,7 @@ public class RealmHelper {
         realm.copyToRealm(product);
         realm.commitTransaction();
 
-        Log.d(TAG, product.getName() + "is added");
+        Log.d(TAG, product.getName() + " is added");
     }
 
     public RealmList<Cart> getActiveCart() {
@@ -92,6 +104,21 @@ public class RealmHelper {
         return realm.where(Cart.class)
                 .equalTo("store.idStore", idStore)
                 .equalTo("status", false)
+                .notEqualTo("total", 0)
+                .findFirst();
+    }
+
+    public Cart findCartById(int idCart) {
+        return realm.where(Cart.class)
+                .equalTo("idCart", idCart)
+                .findFirst();
+    }
+
+    public Cart findEmptyCartStoreById(String idStore) {
+        return realm.where(Cart.class)
+                .equalTo("store.idStore", idStore)
+                .equalTo("status", false)
+                .equalTo("total", 0)
                 .findFirst();
     }
 
@@ -99,6 +126,7 @@ public class RealmHelper {
         return realm.where(Cart.class)
                 .equalTo("store.idStore", idStore)
                 .equalTo("status", true)
+                .notEqualTo("total", 0)
                 .findFirst();
     }
 
@@ -112,102 +140,86 @@ public class RealmHelper {
         }
     }
 
+    public void createEmptyCartStore(Store store) {
+        Cart emptyCart = new Cart(Helper.generateId(), store, 0, false);
+
+        realm.beginTransaction();
+        realm.copyToRealm(emptyCart);
+        realm.commitTransaction();
+    }
+
     public void updateCart(String idStore, Product product, Integer quantity) {
-        Cart cart = findCartStoreById(idStore);
+        Cart cart = findEmptyCartStoreById(idStore);
+
+        if (cart == null) {
+            Log.d(TAG, "Empty cart not found");
+            cart = findCartStoreById(idStore);
+        }
 
         Log.d(TAG, String.valueOf(cart));
-        if (cart == null) {
-            RealmList<Product> products = new RealmList<>();
+        Log.d(TAG, String.valueOf(product.isBuyed()));
 
-            Store store = getStoreById(idStore);
-            int total = product.getPrice() * quantity;
-            products.add(product);
+        int total = 0;
+        if (product.isBuyed()) {
+            Log.d(TAG, String.valueOf(cart.getProducts().size()));
+            for (Product prd: cart.getProducts()) {
+                if (prd.getIdProduct() == product.getIdProduct()) {
+                    realm.beginTransaction();
+                    prd.setTotal(quantity);
+                    realm.commitTransaction();
+                }
+                total = total + prd.getPrice() * prd.getTotal();
+            }
 
-            Log.d(TAG, store.getName() + " : " + quantity + " : " + total);
+            if (quantity == 0) {
+                RealmList<Product> products = cart.getProducts();
 
-            Cart newCart = new Cart();
-            newCart.setIdCart((int) (System.currentTimeMillis()));
-            newCart.setStatus(false);
-            newCart.setProducts(products);
-            newCart.setTotal(total);
-            newCart.setStore(store);
+                int position = 0;
+                for (Product prd: products) {
+                    if (prd.getIdProduct() == product.getIdProduct()) {
+                        Log.d(TAG, "FOund");
+                        realm.beginTransaction();
+                        prd.setBuyed(false);
+                        realm.commitTransaction();
+                        break;
+                    }
+                    position++;
+                }
 
+                Log.d(TAG, "Position " + String.valueOf(position));
+
+                realm.beginTransaction();
+                cart.getProducts().remove(position);
+                realm.commitTransaction();
+            }
+
+            realm.beginTransaction();
+            cart.setTotal(total);
+
+            Log.d(TAG, "Cart size product " + String.valueOf(cart.getProducts().size()));
+
+            realm.commitTransaction();
+        }else {
             realm.beginTransaction();
             product.setTotal(quantity);
             product.setBuyed(true);
             realm.commitTransaction();
 
+            total = cart.getTotal() + product.getPrice() * product.getTotal();
+
+            Log.d(TAG, String.valueOf(cart.getTotal()));
+            Log.d(TAG, String.valueOf(product.getPrice()));
+            Log.d(TAG, String.valueOf(product.getTotal()));
+            Log.d(TAG, "===========");
+            Log.d(TAG, String.valueOf(total));
+
             realm.beginTransaction();
-            realm.copyToRealm(newCart);
+            cart.getProducts().add(product);
+            cart.setTotal(total);
             realm.commitTransaction();
-        } else {
-            Log.d(TAG, String.valueOf(product.isBuyed()));
-
-            int total = 0;
-            if (product.isBuyed()) {
-                Log.d(TAG, String.valueOf(cart.getProducts().size()));
-                for (Product prd: cart.getProducts()) {
-                    if (prd.getIdProduct() == product.getIdProduct()) {
-                        realm.beginTransaction();
-                        prd.setTotal(quantity);
-                        realm.commitTransaction();
-                    }
-                    total = total + prd.getPrice() * prd.getTotal();
-                }
-
-                if (quantity == 0) {
-                    RealmList<Product> products = cart.getProducts();
-
-                    int position = 0;
-                    for (Product prd: products) {
-                        if (prd.getIdProduct() == product.getIdProduct()) {
-                            Log.d(TAG, "FOund");
-                            realm.beginTransaction();
-                            prd.setBuyed(false);
-                            realm.commitTransaction();
-                            break;
-                        }
-                        position++;
-                    }
-
-                    Log.d(TAG, "Position " + String.valueOf(position));
-
-                    realm.beginTransaction();
-                    cart.getProducts().remove(position);
-                    realm.commitTransaction();
-                }
-
-                realm.beginTransaction();
-                cart.setTotal(total);
-
-                Log.d(TAG, "Cart size product " + String.valueOf(cart.getProducts().size()));
-                if (cart.getProducts().size() == 0) {
-                    cart.deleteFromRealm();
-                }
-
-                realm.commitTransaction();
-            }else {
-                realm.beginTransaction();
-                product.setTotal(quantity);
-                product.setBuyed(true);
-                realm.commitTransaction();
-
-                total = cart.getTotal() + product.getPrice() * product.getTotal();
-
-                Log.d(TAG, String.valueOf(cart.getTotal()));
-                Log.d(TAG, String.valueOf(product.getPrice()));
-                Log.d(TAG, String.valueOf(product.getTotal()));
-                Log.d(TAG, "===========");
-                Log.d(TAG, String.valueOf(total));
-
-                realm.beginTransaction();
-                cart.getProducts().add(product);
-                cart.setTotal(total);
-                realm.commitTransaction();
-
-            }
 
         }
+
     }
 
     public void finishCartTransaction(Cart cart) {
@@ -216,6 +228,7 @@ public class RealmHelper {
             Product prd = cart.getProducts().get(i);
 
             CartItem cartItem = new CartItem();
+            cartItem.setIdCartItem(Helper.generateId());
             cartItem.setIdProduct(prd.getIdProduct());
             cartItem.setImgUrl(prd.getImgUrl());
             cartItem.setPrice(prd.getPrice());
@@ -226,8 +239,10 @@ public class RealmHelper {
             cart.getCartItems().add(cartItem);
 
             cart.getProducts().get(i).setTotal(0);
-            cart.getProducts().remove(i);
+            cart.getProducts().get(i).setBuyed(false);
         }
+
+        cart.getProducts().clear();
 
         cart.setStatus(true);
         realm.commitTransaction();
@@ -236,5 +251,14 @@ public class RealmHelper {
     public RealmResults<Store> getStoreList() {
         RealmResults<Store> stores = realm.where(Store.class).findAll();
         return stores;
+    }
+
+    public RealmList<Product> getProductCategory(String idStore, Integer idCategory) {
+        RealmList<Product> products = new RealmList<>();
+        RealmResults<Product> realmResults = realm.where(Product.class).equalTo("idStore", idStore).equalTo("idCat", idCategory).findAll();
+
+        products.addAll(realmResults);
+
+        return products;
     }
 }

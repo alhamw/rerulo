@@ -21,14 +21,6 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ActiveOrderFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ActiveOrderFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ActiveOrderFragment extends Fragment {
     private final String TAG = getClass().getSimpleName();
     // TODO: Rename parameter arguments, choose names that match
@@ -93,7 +85,7 @@ public class ActiveOrderFragment extends Fragment {
         rvMainActiveOrder.setHasFixedSize(true);
         rvMainActiveOrder.setNestedScrollingEnabled(false);
 
-        RealmResults<Cart> realmResults = realm.where(Cart.class).equalTo("status", false).findAll();
+        RealmResults<Cart> realmResults = realm.where(Cart.class).equalTo("status", false).notEqualTo("total", 0).findAll();
         carts.clear();
         carts.addAll(realmResults);
 
@@ -101,10 +93,18 @@ public class ActiveOrderFragment extends Fragment {
         adapterActiveOrder.setOnClickListener(new AdapterActiveOrder.OnClickListener() {
             @Override
             public void onClicked(Cart cart) {
-                onActiveCartClickListener.onActiveCartClicked(cart.getStore());
+                onActiveCartClickListener.onActiveCartClicked(cart);
             }
         });
         rvMainActiveOrder.setAdapter(adapterActiveOrder);
+    }
+
+    public void refresh() {
+        RealmResults<Cart> realmResults = realm.where(Cart.class).equalTo("status", false).notEqualTo("total", 0).findAll();
+        carts.clear();
+        carts.addAll(realmResults);
+
+        adapterActiveOrder.notifyDataSetChanged();
     }
 
     @Override
@@ -137,6 +137,6 @@ public class ActiveOrderFragment extends Fragment {
     }
 
     public interface OnActiveCartClickListener {
-        void onActiveCartClicked(Store store);
+        void onActiveCartClicked(Cart cart);
     }
 }

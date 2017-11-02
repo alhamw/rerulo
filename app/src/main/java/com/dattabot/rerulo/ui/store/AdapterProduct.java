@@ -11,14 +11,11 @@ import android.widget.TextView;
 import com.dattabot.rerulo.R;
 import com.dattabot.rerulo.config.Helper;
 import com.dattabot.rerulo.model.Product;
-import com.dattabot.rerulo.model.ProductModel;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by alhamwa on 10/20/17.
@@ -31,10 +28,14 @@ public class AdapterProduct extends RecyclerView.Adapter {
 
     private OnBtnQuantityClickListener onBtnQuantityClickListener;
 
-
     public AdapterProduct(Context context, RealmList<Product> dataList) {
         this.context = context;
         this.dataList = dataList;
+    }
+
+    public void refreshData(RealmList<Product> dataList) {
+        this.dataList = dataList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -51,7 +52,7 @@ public class AdapterProduct extends RecyclerView.Adapter {
         itemHolder.tvName.setText(data.getName());
         itemHolder.tvQuantity.setText(String.valueOf(data.getTotal()));
         itemHolder.tvUnit.setText("Satuan : " + data.getUnit());
-        itemHolder.tvPrice.setText("Rp " + Helper.ConvertRupiahFormat(String.valueOf(data.getPrice())));
+        itemHolder.tvPrice.setText("Rp " + Helper.convertRupiahFormat(String.valueOf(data.getPrice())));
 
         Picasso.with(context)
                 .load(data.getImgUrl())
@@ -62,10 +63,12 @@ public class AdapterProduct extends RecyclerView.Adapter {
         itemHolder.btnDec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (data.getTotal() > 0) {
                     Integer quan = data.getTotal() - 1;
 
                     itemHolder.tvQuantity.setText(String.valueOf(quan));
                     onBtnQuantityClickListener.onBtnQuantityClicked(data, quan);
+                }
             }
         });
 

@@ -3,6 +3,7 @@ package com.dattabot.rerulo.ui.login;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -39,7 +40,9 @@ import com.dattabot.rerulo.R;
 import com.dattabot.rerulo.config.ApiUtils;
 import com.dattabot.rerulo.config.DattaBot;
 import com.dattabot.rerulo.config.RealmHelper;
+import com.dattabot.rerulo.model.RestModel.StoreModel;
 import com.dattabot.rerulo.model.RestModel.UserModel;
+import com.dattabot.rerulo.model.Store;
 import com.dattabot.rerulo.model.User;
 import com.dattabot.rerulo.ui.main.MainActivity;
 
@@ -62,6 +65,7 @@ public class LoginActivity extends AppCompatActivity{
     private RealmHelper realmHelper;
     private User user;
     private DattaBot dattaBot;
+    private ProgressDialog pDialog;
 
     @BindView(R.id.login_et_phone)
     EditText etPhone;
@@ -106,6 +110,7 @@ public class LoginActivity extends AppCompatActivity{
                     @Override
                     public void onFailure(Call<List<UserModel>> call, Throwable t) {
                         Log.d(TAG, t.toString());
+                        Toast.makeText(LoginActivity.this, "Tidak terkoneksi ke internet", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -115,11 +120,49 @@ public class LoginActivity extends AppCompatActivity{
 
         User user = new User(u.getUserName(), u.getUserPass(), u.getPhoneUmber(), u.getUserNameFull(), u.getAddress(), u.getCity(), u.getProvince());
         user.setImgUrl(u.getImgPhoto());
+        user.setLogin(true);
         realmHelper.insertUser(user);
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Mempersiapkan data ...");
+        pDialog.show();
+
+        getStoreList(user);
+    }
+
+    private void getStoreList(User user) {
+        dattaBot.getStore(user.getProvince(), user.getCity(), "")
+                .enqueue(new Callback<List<StoreModel>>() {
+                    @Override
+                    public void onResponse(Call<List<StoreModel>> call, Response<List<StoreModel>> response) {
+                        Log.d(TAG, response.toString());
+                        if (response.isSuccessful()) {
+                            for (StoreModel sm : response.body()) {
+                                Store store = new Store();
+                                store.setIdStore(sm.getWCode());
+                                store.setName(sm.getWName());
+                                store.setImgUrl(sm.getWImg());
+                                store.setAddress(sm.getWAddress());
+                                store.setProvince(sm.getWProvince());
+
+                                realmHelper.insertStore(store);
+                            }
+
+                            Log.d(TAG, "Jumlah Toko : " + response.body().size());
+                            pDialog.dismiss();
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<StoreModel>> call, Throwable t) {
+                        Log.d(TAG, t.toString());
+                        Toast.makeText(LoginActivity.this, "Tidak terkoneksi ke internet", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 }

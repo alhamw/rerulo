@@ -14,6 +14,8 @@ public class Product extends RealmObject {
     private String name, imgUrl, unit;
     private int price, total;
     private boolean isBuyed;
+    private String idStore;
+    private int idCat;
 
     public Product() {
     }
@@ -35,6 +37,22 @@ public class Product extends RealmObject {
         this.price = price;
         this.total = total;
         this.isBuyed = isBuyed;
+    }
+
+    public String getIdStore() {
+        return idStore;
+    }
+
+    public void setIdStore(String idStore) {
+        this.idStore = idStore;
+    }
+
+    public int getIdCat() {
+        return idCat;
+    }
+
+    public void setIdCat(int idCat) {
+        this.idCat = idCat;
     }
 
     public int getIdProduct() {

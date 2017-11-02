@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Cari Toko"
                     android:maxLines="1"
-                    android:imeOptions="actionDone"
+                    android:imeOptions="actionSearch"
                     android:textColor="@color/text_or_icons"
                     android:textColorHint="@color/hintColor"
                     android:background="@color/colorPrimaryDark" />
@@ -60,6 +60,7 @@
 
             <TextView
                 android:id="@+id/fragment_home_tv_not_found"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

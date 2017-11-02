@@ -11,10 +11,7 @@ import android.widget.TextView;
 
 import com.dattabot.rerulo.R;
 import com.dattabot.rerulo.model.Store;
-import com.dattabot.rerulo.model.StoreModel;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +30,11 @@ public class AdapterStore extends RecyclerView.Adapter {
     public AdapterStore(Context context, RealmResults<Store> dataList) {
         this.context = context;
         this.dataList = dataList;
+    }
+
+    public void refreshData(RealmResults<Store> dataList) {
+        this.dataList = dataList;
+        notifyDataSetChanged();
     }
 
     @Override

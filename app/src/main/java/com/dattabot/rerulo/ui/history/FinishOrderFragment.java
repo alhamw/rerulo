@@ -21,14 +21,6 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FinishOrderFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FinishOrderFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FinishOrderFragment extends Fragment {
     private final String TAG = getClass().getSimpleName();
     // TODO: Rename parameter arguments, choose names that match
@@ -98,10 +90,18 @@ public class FinishOrderFragment extends Fragment {
         adapterFinishOrder.setOnClickListener(new AdapterFinishOrder.OnClickListener() {
             @Override
             public void onClicked(Cart cart) {
-                onFinishOrderClickListener.onFinishOrderClicked(cart.getStore());
+                onFinishOrderClickListener.onFinishOrderClicked(cart);
             }
         });
         rvFinishOrder.setAdapter(adapterFinishOrder);
+    }
+
+    public void refresh() {
+        RealmResults<Cart> realmResults = realm.where(Cart.class).equalTo("status", true).findAll();
+        carts.clear();
+        carts.addAll(realmResults);
+
+        adapterFinishOrder.notifyDataSetChanged();
     }
 
     @Override
@@ -130,6 +130,6 @@ public class FinishOrderFragment extends Fragment {
     private OnFinishOrderClickListener onFinishOrderClickListener;
 
     public interface OnFinishOrderClickListener {
-        void onFinishOrderClicked(Store store);
+        void onFinishOrderClicked(Cart cart);
     }
 }

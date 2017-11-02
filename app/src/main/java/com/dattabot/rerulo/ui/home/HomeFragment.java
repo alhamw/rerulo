@@ -107,6 +107,7 @@ public class HomeFragment extends Fragment {
         rvStore.setLayoutManager(glm);
         rvStore.setHasFixedSize(true);
 
+        storeModels = realmHelper.getStoreList();
         adapterStore = new AdapterStore(getActivity(), storeModels);
         adapterStore.setOnStoreClickListener(new AdapterStore.OnStoreClickListener() {
             @Override
@@ -124,9 +125,18 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                storeModels.where().contains("name", s.toString().trim(), Case.INSENSITIVE).findAll();
+                storeModels = realm.where(Store.class).contains("name", s.toString().trim(), Case.INSENSITIVE).findAll();
+
                 Log.d(TAG, String.valueOf(storeModels.size()));
+                tvNotFound.setVisibility(View.GONE);
+
+                adapterStore.refreshData(storeModels);
                 adapterStore.notifyDataSetChanged();
+
+                if (storeModels.size() == 0) {
+                    tvNotFound.setVisibility(View.VISIBLE);
+                    tvNotFound.setText(s.toString() + " tidak ditemukan");
+                }
             }
 
             @Override
@@ -135,42 +145,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        setUpListStore();
-    }
-
-    private void setUpListStore() {
-//        storeModels = realmHelper.getStoreList();
-//
-//        if (storeModels.size() == 0) {
-            dattaBot.getStore("", "", "")
-                    .enqueue(new Callback<List<StoreModel>>() {
-                        @Override
-                        public void onResponse(Call<List<StoreModel>> call, Response<List<StoreModel>> response) {
-                            Log.d(TAG, response.toString());
-                            if (response.isSuccessful()) {
-                                for (StoreModel sm : response.body()) {
-                                    Store store = new Store();
-                                    store.setIdStore(sm.getWCode());
-                                    store.setName(sm.getWName());
-                                    store.setImgUrl(sm.getWImg());
-                                    store.setAddress(sm.getWAddress());
-                                    store.setProvince(sm.getWProvince());
-
-                                    realmHelper.insertStore(store);
-                                }
-                                storeModels = realmHelper.getStoreList();
-                                adapterStore.notifyDataSetChanged();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<StoreModel>> call, Throwable t) {
-                            Log.d(TAG, t.toString());
-                        }
-                    });
-//        }
-
-//        adapterStore.notifyDataSetChanged();
     }
 
     private void showContent() {
